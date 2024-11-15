@@ -16,28 +16,35 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+    
         if (!email || !password) {
             toast.info("Por favor, complete todos los campos");
             return;
         }
-
+    
         setErrorMessage("");
-
+    
         try {
-            const response = await fetch("URL_DEL_API", {
+            const response = await fetch("URL_API", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ email, password }),
             });
-
+    
             const data = await response.json();
-
+    
             if (response.ok) {
                 toast.success("Inicio de sesión exitoso");
-                navigate('/home');
+    
+                if (data.role === "admin") {
+                    navigate('/home');
+                } else if (data.role === "employee") {
+                    navigate('/homeUser');
+                } else {
+                    toast.error("Rol desconocido");
+                }
             } else {
                 toast.error(data.message || "Error en el inicio de sesión");
             }
